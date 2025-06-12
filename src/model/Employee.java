@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.Date; //for Date bdate
-import java.math.BigDecimal; //for BigDecimal (ideal for Decimal(10,2) in MySQL)
 
 public class Employee {
     private String ssn;
@@ -11,11 +10,11 @@ public class Employee {
     private Date bdate;
     private String address;
     private String sex;
-    private BigDecimal salary;
+    private double salary;
     private String super_ssn;
     private Integer dno; //we use Integer when the value is nullable
 
-    public Employee(String ssn, String fname, String minit, String lname, Date bdate, String address, String sex, BigDecimal salary, String super_ssn, Integer dno){
+    public Employee(String ssn, String fname, String minit, String lname, Date bdate, String address, String sex, double salary, String super_ssn, Integer dno){
         this.ssn=ssn;
         this.fname=fname;
         this.minit=minit;
@@ -35,7 +34,7 @@ public class Employee {
     public Date getBdate() {return bdate;}
     public String getAddress() {return address;}
     public String getSex() {return sex;}
-    public BigDecimal getSalary() {return salary;}
+    public double getSalary() {return salary;}
     public String getSuper_ssn() {return super_ssn;}
     public Integer getDno() {return dno;}
 
@@ -46,7 +45,7 @@ public class Employee {
     public void setBdate(Date bdate) {this.bdate=bdate;}
     public void setAddress(String address) {this.address=address;}
     public void setSex(String sex) {this.sex=sex;}
-    public void setSalary(BigDecimal salary) {this.salary=salary;}
+    public void setSalary(double salary) {this.salary=salary;}
     public void setSuper_ssn(String super_ssn) {this.super_ssn=super_ssn;}
     public void setDno(Integer dno) {this.dno=dno;}
 }
