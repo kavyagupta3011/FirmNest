@@ -17,6 +17,17 @@ public class EmployeeDAO {
 
             System.out.println("SSN: ");
             String ssn = scanner.nextLine();
+
+            String checkSSNQuery = "SELECT ssn FROM employee WHERE ssn = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkSSNQuery)) {
+                checkStmt.setString(1, ssn);
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next()) {
+                    System.out.println("Employee with SSN " + ssn + " already exists.");
+                    return;
+                }
+            }
+
             System.out.println("First Name: ");
             String fname = scanner.nextLine();
             System.out.println("Middle Initial: ");
@@ -37,9 +48,31 @@ public class EmployeeDAO {
             if (super_ssn.isBlank()) {
                 super_ssn = null; // Handle null case
             }
+            else {
+                // Check if supervisor SSN exists
+                String checkSuperQuery = "SELECT ssn FROM employee WHERE ssn = ?";
+                try (PreparedStatement superStmt = conn.prepareStatement(checkSuperQuery)) {
+                    superStmt.setString(1, super_ssn);
+                    ResultSet rs = superStmt.executeQuery();
+                    if (!rs.next()) {
+                        System.out.println("Supervisor SSN " + super_ssn + " does not exist.");
+                        return;
+                    }
+                }
+            }
             System.out.println("Department Number: ");
             int dno = Integer.parseInt(scanner.nextLine());
 
+            // Check if department exists
+            String checkDeptQuery = "SELECT dnumber FROM department WHERE dnumber = ?";
+            try (PreparedStatement deptStmt = conn.prepareStatement(checkDeptQuery)) {
+                deptStmt.setInt(1, dno);
+                ResultSet rs = deptStmt.executeQuery();
+                if (!rs.next()) {
+                    System.out.println("Department number " + dno + " does not exist.");
+                    return;
+                }
+            }
             String query="INSERT INTO employee (ssn, fname, minit, lname, bdate, address, sex, salary, super_ssn, dno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             PreparedStatement pstmt = conn.prepareStatement(query);

@@ -2,7 +2,11 @@ package util;
 
 import java.util.Scanner;
 
+
 import dao.EmployeeDAO;
+import dao.DepartmentDAO;
+import dao.DeptLocationsDAO;
+
 
 public class Main {
     public static void main(String[] args){
@@ -14,12 +18,22 @@ public class Main {
             System.out.println("1. Add Employee");
             System.out.println("2. Find Employee By SSN");
             System.out.println("3. See Details of All Employees");
-            System.out.println("4. Upddate Employee Details");
+            System.out.println("4. Update Employee Details");
             System.out.println("5. Delete Employee Details");
             System.out.println("6. Find Employees in a Department");
             System.out.println("7. Find details of Employees Working on a Project");
             System.out.println("8. Miscellaneous Employee Filters");
 
+            System.out.println("9. Add Department");
+            System.out.println("10. Find Department By Number");
+            System.out.println("11. See Details of All Departments");
+            System.out.println("12. Update Department Details");
+            System.out.println("13. Delete Department Details");
+
+            System.out.println("14. Add Department Location");
+            System.out.println("15. Find Locations of a Department");
+            System.out.println("16. Delete Department Location");
+            System.out.println("17. See All Department Locations");
 
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
@@ -27,6 +41,8 @@ public class Main {
 
 
         EmployeeDAO employeeDAO = new EmployeeDAO();
+        DepartmentDAO departmentDAO = new DepartmentDAO();
+        DeptLocationsDAO deptLocationsDAO = new DeptLocationsDAO();
 
             switch(choice) {
                 case 1:
@@ -52,6 +68,33 @@ public class Main {
                     break;
                 case 8:
                     employeeDAO.employeeFilterMenu();
+                    break;
+                case 9:
+                    departmentDAO.addDepartment();
+                    break;
+                case 10:
+                    departmentDAO.getDepartmentById();
+                    break;
+                case 11:
+                    departmentDAO.getAllDepartments();
+                    break;
+                case 12:
+                    departmentDAO.updateDepartment();
+                    break;
+                case 13:
+                    departmentDAO.deleteDepartment();
+                    break;
+                case 14:
+                    deptLocationsDAO.addLocation();
+                    break;
+                case 15:
+                    deptLocationsDAO.getLocationsByDeptId();
+                    break;
+                case 16:
+                    deptLocationsDAO.deleteLocation();
+                    break;
+                case 17:
+                    deptLocationsDAO.getAllLocations();
                     break;
                 case 0:
                     System.out.println("Exiting the application...");
