@@ -13,6 +13,8 @@ import dao.TrainingProgramDAO;
 import dao.EmployeeTrainingDAO;
 import dao.AssetsDAO;
 import dao.AssetMaintenanceDAO;
+import dao.AttendanceDAO;
+import dao.PerformanceReviewDAO;
 
 
 public class Main {
@@ -81,6 +83,14 @@ public class Main {
             System.out.println("48. Get Maintenance Records by Asset");
             System.out.println("49. Get All Maintenance Logs");
 
+            System.out.println("50. Mark Attendance");
+            System.out.println("51. Get Attendance by Employee");
+            System.out.println("52. Get Attendance by Date");
+            System.out.println("53. Get Monthly Attendance Report");
+
+            System.out.println("54. Add Performance Review");
+            System.out.println("55. Get Reviews by Employee");
+            System.out.println("56. Update Performance Review");
 
 
             System.out.println("0. Exit");
@@ -98,6 +108,8 @@ public class Main {
             EmployeeTrainingDAO employeeTrainingDAO = new EmployeeTrainingDAO();
             AssetsDAO assetsDAO = new AssetsDAO();
             AssetMaintenanceDAO assetMaintenanceDAO = new AssetMaintenanceDAO();
+            AttendanceDAO attendanceDAO = new AttendanceDAO();
+            PerformanceReviewDAO performanceReviewDAO = new PerformanceReviewDAO();
 
             switch(choice) {
                 case 1:
@@ -246,6 +258,27 @@ public class Main {
                     break;
                 case 49:
                     assetMaintenanceDAO.getAllMaintenanceLogs();
+                    break;
+                case 50:
+                    attendanceDAO.markAttendance();
+                    break;
+                case 51:
+                    attendanceDAO.getAttendanceByEmployee();
+                    break;
+                case 52:
+                    attendanceDAO.getAttendanceByDate();
+                    break;
+                case 53:
+                    attendanceDAO.getMonthlyAttendanceReport();
+                    break;
+                case 54:
+                    performanceReviewDAO.addReview();
+                    break;
+                case 55:
+                    performanceReviewDAO.getReviewsByEmployee();
+                    break;
+                case 56:
+                    performanceReviewDAO.updateReview();
                     break;
                 case 0:
                     System.out.println("Exiting the application...");
