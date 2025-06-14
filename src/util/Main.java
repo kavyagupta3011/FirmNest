@@ -11,6 +11,8 @@ import dao.WorksOnDAO;
 import dao.DependentDAO;
 import dao.TrainingProgramDAO;
 import dao.EmployeeTrainingDAO;
+import dao.AssetsDAO;
+import dao.AssetMaintenanceDAO;
 
 
 public class Main {
@@ -69,6 +71,16 @@ public class Main {
             System.out.println("40. Get Training Enrollments by Training Program");
             System.out.println("41. Delete Training Enrollment");
 
+            System.out.println("42. Add Asset");
+            System.out.println("43. Assign Asset to Employee");
+            System.out.println("44. Get Assets by Employee");
+            System.out.println("45. Update Asset Details");
+            System.out.println("46. Delete Asset");
+
+            System.out.println("47. Record Asset Maintenance");
+            System.out.println("48. Get Maintenance Records by Asset");
+            System.out.println("49. Get All Maintenance Logs");
+
 
 
             System.out.println("0. Exit");
@@ -84,6 +96,8 @@ public class Main {
             DependentDAO dependentDAO = new DependentDAO();
             TrainingProgramDAO trainingProgramDAO = new TrainingProgramDAO();
             EmployeeTrainingDAO employeeTrainingDAO = new EmployeeTrainingDAO();
+            AssetsDAO assetsDAO = new AssetsDAO();
+            AssetMaintenanceDAO assetMaintenanceDAO = new AssetMaintenanceDAO();
 
             switch(choice) {
                 case 1:
@@ -208,6 +222,30 @@ public class Main {
                     break;
                 case 41:
                     employeeTrainingDAO.removeEmployeeFromTraining();
+                    break;
+                case 42:
+                    assetsDAO.addAsset();
+                    break;
+                case 43:
+                    assetsDAO.assignAssetToEmployee();
+                    break;
+                case 44:
+                    assetsDAO.getAssetsByEmployee();
+                    break;
+                case 45:
+                    assetsDAO.updateAssetStatus();
+                    break;
+                case 46:
+                    assetsDAO.deleteAsset();
+                    break;
+                case 47:
+                    assetMaintenanceDAO.recordMaintenance();
+                    break;
+                case 48:
+                    assetMaintenanceDAO.getMaintenanceByAsset();
+                    break;
+                case 49:
+                    assetMaintenanceDAO.getAllMaintenanceLogs();
                     break;
                 case 0:
                     System.out.println("Exiting the application...");
