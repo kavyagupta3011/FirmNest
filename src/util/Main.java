@@ -9,6 +9,8 @@ import dao.DeptLocationsDAO;
 import dao.ProjectDAO;
 import dao.WorksOnDAO;
 import dao.DependentDAO;
+import dao.TrainingProgramDAO;
+import dao.EmployeeTrainingDAO;
 
 
 public class Main {
@@ -56,6 +58,16 @@ public class Main {
             System.out.println("31. Find Dependents by Employee");
             System.out.println("32. Delete Dependent");
 
+            System.out.println("33. Add Training Program");
+            System.out.println("34. See All Training Programs");
+            System.out.println("35. Get Training Program By ID");
+            System.out.println("36. Update Training Program");
+            System.out.println("37. Delete Training Program");
+
+            System.out.println("38. Enroll Employee in Training");
+            System.out.println("39. Get Training Enrollments by Employee");
+            System.out.println("40. Get Training Enrollments by Training Program");
+            System.out.println("41. Delete Training Enrollment");
 
 
 
@@ -70,6 +82,8 @@ public class Main {
             ProjectDAO projectDAO = new ProjectDAO();
             WorksOnDAO worksOnDAO = new WorksOnDAO();
             DependentDAO dependentDAO = new DependentDAO();
+            TrainingProgramDAO trainingProgramDAO = new TrainingProgramDAO();
+            EmployeeTrainingDAO employeeTrainingDAO = new EmployeeTrainingDAO();
 
             switch(choice) {
                 case 1:
@@ -167,6 +181,33 @@ public class Main {
                     break;
                 case 32:
                     dependentDAO.deleteDependent();
+                    break;
+                case 33:
+                    trainingProgramDAO.addTraining();
+                    break;
+                case 34:
+                    trainingProgramDAO.getAllTrainings();
+                    break;
+                case 35:
+                    trainingProgramDAO.getTrainingById();
+                    break;
+                case 36:
+                    trainingProgramDAO.updateTraining();
+                    break;
+                case 37:
+                    trainingProgramDAO.deleteTraining();
+                    break;
+                case 38:
+                    employeeTrainingDAO.enrollEmployeeInTraining();
+                    break;
+                case 39:
+                    employeeTrainingDAO.getTrainingEnrollmentsByEmployee();
+                    break;
+                case 40:
+                    employeeTrainingDAO.getEmployeesInTraining();
+                    break;
+                case 41:
+                    employeeTrainingDAO.removeEmployeeFromTraining();
                     break;
                 case 0:
                     System.out.println("Exiting the application...");
