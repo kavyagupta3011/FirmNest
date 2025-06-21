@@ -142,3 +142,15 @@ CREATE TABLE supervisor_change_history (
     change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE leave_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    ssn VARCHAR(11),
+    type ENUM('Leave', 'WorkFromHome'),
+    start_date DATE,
+    end_date DATE,
+    reason TEXT,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    applied_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+

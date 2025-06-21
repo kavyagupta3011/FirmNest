@@ -15,6 +15,7 @@ import dao.AssetsDAO;
 import dao.AssetMaintenanceDAO;
 import dao.AttendanceDAO;
 import dao.PerformanceReviewDAO;
+import dao.LeaveRequestDAO;
 
 
 public class Main {
@@ -106,6 +107,13 @@ public class Main {
             System.out.println("68. Miscellaneous Employee Training Filter");
             System.out.println("69. Miscellaneous Attendance Filter");
             System.out.println("70. Miscellaneous Performance Review Filter");
+            System.out.println("71. Apply for Leave / Work From Home");  
+            System.out.println("72. View Leave Requests by Employee");  
+            System.out.println("73. View All Leave Requests (Admin)");  
+            System.out.println("74. Update Leave Request Status (Approve/Reject)");  
+            System.out.println("75. Filter: Pending Requests");  
+            System.out.println("76. Filter: Leaves in a Given Month");  
+
 
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
@@ -124,6 +132,7 @@ public class Main {
             AssetMaintenanceDAO assetMaintenanceDAO = new AssetMaintenanceDAO();
             AttendanceDAO attendanceDAO = new AttendanceDAO();
             PerformanceReviewDAO performanceReviewDAO = new PerformanceReviewDAO();
+            LeaveRequestDAO leaveRequestDAO = new LeaveRequestDAO(); 
 
             switch(choice) {
                 case 1:
@@ -335,6 +344,24 @@ public class Main {
                     break;
                 case 70:
                     performanceReviewDAO.reviewFilterMenu();
+                    break;
+                case 71:
+                    leaveRequestDAO.applyLeave();
+                    break;
+                case 72:
+                    leaveRequestDAO.viewLeavesByEmployee();
+                    break;
+                case 73:
+                    leaveRequestDAO.viewAllRequests();
+                    break;
+                case 74:
+                    leaveRequestDAO.updateRequestStatus();
+                    break;
+                case 75:
+                    leaveRequestDAO.filterPendingRequests();
+                    break;
+                case 76:
+                    leaveRequestDAO.filterLeavesInMonth();
                     break;
                 case 0:
                     System.out.println("Exiting the application...");
