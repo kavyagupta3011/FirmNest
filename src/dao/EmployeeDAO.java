@@ -6,6 +6,7 @@ import model.Employee;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class EmployeeDAO {
@@ -204,105 +205,261 @@ public class EmployeeDAO {
     }
 
     public void updateEmployee() {
-        Scanner scanner = new Scanner(System.in);
+    Scanner scanner = new Scanner(System.in);
 
-        try (Connection conn = DBConnection.getConnection()) {
-            System.out.print("Enter SSN of employee to update: ");
-            String ssn = scanner.nextLine();
+    try (Connection conn = DBConnection.getConnection()) {
+        System.out.print("Enter SSN of employee to update: ");
+        String ssn = scanner.nextLine();
 
-            Employee emp = getEmployeeByIdHelper(ssn);
-            if (emp == null) {
-                System.out.println("Employee not found.");
-                return;
+        Employee emp = getEmployeeByIdHelper(ssn);
+        if (emp == null) {
+            System.out.println("Employee not found.");
+            return;
+        }
+
+        // Pre-fill current values
+        String newFname = emp.getFname();
+        String newLname = emp.getLname();
+        String newAddress = emp.getAddress();
+        double newSalary = emp.getSalary();
+        String newSex = emp.getSex();
+        Date newBdate = emp.getBdate();
+        String newSuperSSN = emp.getSuper_ssn();
+        Integer oldDno = emp.getDno();  // For tracking change
+        Integer newDno = oldDno;
+
+        boolean done = false;
+        while (!done) {
+            System.out.println("\nWhat do you want to update?");
+            System.out.println("1. First Name");
+            System.out.println("2. Last Name");
+            System.out.println("3. Address");
+            System.out.println("4. Salary");
+            System.out.println("5. Sex");
+            System.out.println("6. Birth Date (yyyy-mm-dd)");
+            System.out.println("7. Supervisor SSN");
+            System.out.println("8. Department No");
+            System.out.println("0. Done");
+
+            System.out.print("Enter choice: ");
+            int choice = Integer.parseInt(scanner.nextLine());
+
+            switch (choice) {
+                case 1 -> {
+                    System.out.print("Enter new First Name: ");
+                    newFname = scanner.nextLine();
+                }
+                case 2 -> {
+                    System.out.print("Enter new Last Name: ");
+                    newLname = scanner.nextLine();
+                }
+                case 3 -> {
+                    System.out.print("Enter new Address: ");
+                    newAddress = scanner.nextLine();
+                }
+                case 4 -> {
+                    System.out.print("Enter new Salary: ");
+                    newSalary = Double.parseDouble(scanner.nextLine());
+                }
+                case 5 -> {
+                    System.out.print("Enter new Sex (M/F): ");
+                    newSex = scanner.nextLine();
+                }
+                case 6 -> {
+                    System.out.print("Enter new Birth Date (yyyy-mm-dd): ");
+                    newBdate = Date.valueOf(scanner.nextLine());
+                }
+                case 7 -> {
+                    System.out.print("Enter new Supervisor SSN: ");
+                    newSuperSSN = scanner.nextLine();
+                }
+                case 8 -> {
+                    System.out.print("Enter new Department No: ");
+                    newDno = Integer.parseInt(scanner.nextLine());
+                }
+                case 0 -> done = true;
+                default -> System.out.println("Invalid choice.");
             }
+        }
 
-            // Pre-fill current values
-            String newFname = emp.getFname();
-            String newLname = emp.getLname();
-            String newAddress = emp.getAddress();
-            double newSalary = emp.getSalary();
-            String newSex = emp.getSex();
-            Date newBdate = emp.getBdate();
-            String newSuperSSN = emp.getSuper_ssn();
-            Integer newDno = emp.getDno();
+        String query = "UPDATE employee SET fname = ?, lname = ?, address = ?, salary = ?, sex = ?, bdate = ?, super_ssn = ?, dno = ? WHERE ssn = ?";
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, newFname);
+        pstmt.setString(2, newLname);
+        pstmt.setString(3, newAddress);
+        pstmt.setDouble(4, newSalary);
+        pstmt.setString(5, newSex);
+        pstmt.setDate(6, newBdate);
+        pstmt.setString(7, newSuperSSN);
+        pstmt.setInt(8, newDno);
+        pstmt.setString(9, ssn);
 
-            boolean done = false;
-            while (!done) {
-                System.out.println("\nWhat do you want to update?");
-                System.out.println("1. First Name");
-                System.out.println("2. Last Name");
-                System.out.println("3. Address");
-                System.out.println("4. Salary");
-                System.out.println("5. Sex");
-                System.out.println("6. Birth Date (yyyy-mm-dd)");
-                System.out.println("7. Supervisor SSN");
-                System.out.println("8. Department No");
-                System.out.println("0. Done");
+        int rows = pstmt.executeUpdate();
+        if (rows > 0) {
+            System.out.println("Employee updated successfully.");
 
-                System.out.print("Enter choice: ");
-                int choice = Integer.parseInt(scanner.nextLine());
-
-                switch (choice) {
-                    case 1:
-                        System.out.print("Enter new First Name: ");
-                        newFname = scanner.nextLine();
-                        break;
-                    case 2:
-                        System.out.print("Enter new Last Name: ");
-                        newLname = scanner.nextLine();
-                        break;
-                    case 3:
-                        System.out.print("Enter new Address: ");
-                        newAddress = scanner.nextLine();
-                        break;
-                    case 4:
-                        System.out.print("Enter new Salary: ");
-                        newSalary = Double.parseDouble(scanner.nextLine());
-                        break;
-                    case 5:
-                        System.out.print("Enter new Sex (M/F): ");
-                        newSex = scanner.nextLine();
-                        break;
-                    case 6:
-                        System.out.print("Enter new Birth Date (yyyy-mm-dd): ");
-                        newBdate = Date.valueOf(scanner.nextLine());
-                        break;
-                    case 7:
-                        System.out.print("Enter new Supervisor SSN: ");
-                        newSuperSSN = scanner.nextLine();
-                        break;
-                    case 8:
-                        System.out.print("Enter new Department No: ");
-                        newDno = Integer.parseInt(scanner.nextLine());
-                        break;
-                    case 0:
-                        done = true;
-                        break;
-                    default:
-                        System.out.println("Invalid choice.");
+            // Log department change if it was changed
+            if (!Objects.equals(oldDno, newDno)) {
+                String logQuery = "INSERT INTO dept_change_history (ssn, old_dno, new_dno) VALUES (?, ?, ?)";
+                try (PreparedStatement logStmt = conn.prepareStatement(logQuery)) {
+                    logStmt.setString(1, ssn);
+                    logStmt.setInt(2, oldDno);
+                    logStmt.setInt(3, newDno);
+                    logStmt.executeUpdate();
+                    System.out.println("Department change history recorded.");
+                }
+            }
+            if (emp.getSalary() != newSalary) {
+            String salaryLogQuery = "INSERT INTO salary_change_history (ssn, old_salary, new_salary) VALUES (?, ?, ?)";
+            try (PreparedStatement sStmt = conn.prepareStatement(salaryLogQuery)) {
+                sStmt.setString(1, ssn);
+                sStmt.setDouble(2, emp.getSalary());
+                sStmt.setDouble(3, newSalary);
+                sStmt.executeUpdate();
+                System.out.println("Salary change history recorded.");
+                }
+            }
+            if (!Objects.equals(emp.getSuper_ssn(), newSuperSSN)) {
+            String superLogQuery = "INSERT INTO supervisor_change_history (ssn, old_super_ssn, new_super_ssn) VALUES (?, ?, ?)";
+            try (PreparedStatement supStmt = conn.prepareStatement(superLogQuery)) {
+                supStmt.setString(1, ssn);
+                supStmt.setString(2, emp.getSuper_ssn());
+                supStmt.setString(3, newSuperSSN);
+                supStmt.executeUpdate();
+                System.out.println("Supervisor change history recorded.");
                 }
             }
 
-            String query = "UPDATE employee SET fname = ?, lname = ?, address = ?, salary = ?, sex = ?, bdate = ?, super_ssn = ?, dno = ? WHERE ssn = ?";
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, newFname);
-            pstmt.setString(2, newLname);
-            pstmt.setString(3, newAddress);
-            pstmt.setDouble(4, newSalary);
-            pstmt.setString(5, newSex);
-            pstmt.setDate(6, newBdate);
-            pstmt.setString(7, newSuperSSN);
-            pstmt.setInt(8, newDno);
-            pstmt.setString(9, ssn);
 
-            int rows = pstmt.executeUpdate();
-            System.out.println(rows > 0 ? "Employee updated successfully." : "Update failed.");
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("Update failed.");
         }
-        scanner.close();
+
+    } catch (Exception e) {
+        System.out.println("Error updating employee.");
+        e.printStackTrace();
     }
+
+    scanner.close();
+}
+
+    public void viewDepartmentChangeHistory() {
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Enter employee SSN to view department change history: ");
+    String ssn = scanner.nextLine();
+
+    String query = """
+        SELECT dch.old_dno, dch.new_dno, dch.change_date,
+               d1.dname AS old_dept, d2.dname AS new_dept
+        FROM dept_change_history dch
+        LEFT JOIN department d1 ON dch.old_dno = d1.dnumber
+        LEFT JOIN department d2 ON dch.new_dno = d2.dnumber
+        WHERE dch.ssn = ?
+        ORDER BY dch.change_date DESC
+    """;
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+        pstmt.setString(1, ssn);
+        ResultSet rs = pstmt.executeQuery();
+
+        System.out.println("\n--- Department Change History ---");
+        boolean found = false;
+        while (rs.next()) {
+            found = true;
+            System.out.printf("From Dept #%d (%s) → To Dept #%d (%s) on %s\n",
+                    rs.getInt("old_dno"),
+                    rs.getString("old_dept"),
+                    rs.getInt("new_dno"),
+                    rs.getString("new_dept"),
+                    rs.getTimestamp("change_date").toString());
+        }
+
+        if (!found) {
+            System.out.println("No department changes recorded for this employee.");
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error retrieving department change history.");
+        e.printStackTrace();
+    }
+    scanner.close();
+}
+
+
+    public void viewSalaryChangeHistory() {
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Enter Employee SSN to view salary change history: ");
+    String ssn = scanner.nextLine();
+
+    String query = "SELECT * FROM salary_change_history WHERE ssn = ? ORDER BY change_date DESC";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+        pstmt.setString(1, ssn);
+        ResultSet rs = pstmt.executeQuery();
+
+        System.out.println("\n--- Salary Change History ---");
+        System.out.printf("%-10s %-12s %-12s %-20s%n", "SSN", "Old Salary", "New Salary", "Change Date");
+
+        boolean found = false;
+        while (rs.next()) {
+            found = true;
+            System.out.printf("%-10s %-12.2f %-12.2f %-20s%n",
+                rs.getString("ssn"),
+                rs.getDouble("old_salary"),
+                rs.getDouble("new_salary"),
+                rs.getTimestamp("change_date").toString()
+            );
+        }
+
+        if (!found) System.out.println("No salary change history found for this employee.");
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    scanner.close();
+}
+
+    public void viewSupervisorChangeHistory() {
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("Enter Employee SSN to view supervisor change history: ");
+    String ssn = scanner.nextLine();
+
+    String query = "SELECT * FROM supervisor_change_history WHERE ssn = ? ORDER BY change_date DESC";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+        pstmt.setString(1, ssn);
+        ResultSet rs = pstmt.executeQuery();
+
+        System.out.println("\n--- Supervisor Change History ---");
+        System.out.printf("%-10s %-15s %-15s %-20s%n", "SSN", "Old Supervisor", "New Supervisor", "Change Date");
+
+        boolean found = false;
+        while (rs.next()) {
+            found = true;
+            System.out.printf("%-10s %-15s %-15s %-20s%n",
+                rs.getString("ssn"),
+                rs.getString("old_super_ssn") != null ? rs.getString("old_super_ssn") : "NULL",
+                rs.getString("new_super_ssn") != null ? rs.getString("new_super_ssn") : "NULL",
+                rs.getTimestamp("change_date").toString()
+            );
+        }
+
+        if (!found) System.out.println("No supervisor change history found for this employee.");
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    scanner.close();
+}
+
+
 
     public void deleteEmployee(){
         Scanner scanner = new Scanner(System.in);

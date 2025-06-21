@@ -153,5 +153,115 @@ public class AssetsDAO {
             e.printStackTrace();
         }
     }
+
+        // ------------------- FILTER FEATURES -------------------------
+
+    
+
+    private void filterByStatus() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter status to filter (e.g., Available, Assigned): ");
+            String status = scanner.nextLine();
+
+            String query = "SELECT * FROM assets WHERE status = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, status);
+                ResultSet rs = pstmt.executeQuery();
+                displayAssetResults(rs);
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by status.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByDateRange() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter start date (YYYY-MM-DD): ");
+            String start = scanner.nextLine();
+            System.out.print("Enter end date (YYYY-MM-DD): ");
+            String end = scanner.nextLine();
+
+            String query = "SELECT * FROM assets WHERE assigned_date BETWEEN ? AND ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setDate(1, Date.valueOf(start));
+                pstmt.setDate(2, Date.valueOf(end));
+                ResultSet rs = pstmt.executeQuery();
+                displayAssetResults(rs);
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by date range.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByEmployeeSSN() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter full or partial SSN of employee: ");
+            String ssn = scanner.nextLine();
+
+            String query = "SELECT * FROM assets WHERE assigned_to LIKE ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, ssn + "%");
+                ResultSet rs = pstmt.executeQuery();
+                displayAssetResults(rs);
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by employee SSN.");
+            e.printStackTrace();
+        }
+    }
+
+    private void showUnassignedAssets() {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT * FROM assets WHERE assigned_to IS NULL";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                ResultSet rs = pstmt.executeQuery();
+                displayAssetResults(rs);
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving unassigned assets.");
+            e.printStackTrace();
+        }
+    }
+
+    private void displayAssetResults(ResultSet rs) throws SQLException {
+        boolean found = false;
+        System.out.println("\n--- Asset Results ---");
+        while (rs.next()) {
+            found = true;
+            System.out.println("Asset ID: " + rs.getInt("asset_id"));
+            System.out.println("Asset Name: " + rs.getString("asset_name"));
+            System.out.println("Assigned To: " + rs.getString("assigned_to"));
+            System.out.println("Assigned Date: " + rs.getDate("assigned_date"));
+            System.out.println("Status: " + rs.getString("status"));
+            System.out.println("----------------------------");
+        }
+        if (!found) {
+            System.out.println("No matching assets found.");
+        }
+    }
+
+    public void assetFilterMenu() {
+        System.out.println("\n--- Asset Filter Menu ---");
+        System.out.println("1. Filter by Status");
+        System.out.println("2. Filter by Assignment Date Range");
+        System.out.println("3. Filter by Assigned Employee SSN");
+        System.out.println("4. Show Unassigned Assets");
+        System.out.println("0. Exit");
+
+        System.out.print("Enter your choice: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        switch (choice) {
+            case 1 -> filterByStatus();
+            case 2 -> filterByDateRange();
+            case 3 -> filterByEmployeeSSN();
+            case 4 -> showUnassignedAssets();
+            case 0 -> System.out.println("Exiting Asset Filter Menu.");
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
 }
 

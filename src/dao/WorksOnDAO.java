@@ -201,4 +201,150 @@ public class WorksOnDAO {
             e.printStackTrace();
         }
     }
+
+        // ---------------------- FILTERS ------------------------
+
+    
+
+    private void filterByEmployeeSSN() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter Employee SSN: ");
+            String essn = scanner.nextLine();
+
+            String query = "SELECT w.pno, p.pname, w.hours FROM works_on w JOIN project p ON w.pno = p.pnumber WHERE w.essn = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, essn);
+            ResultSet rs = pstmt.executeQuery();
+
+            boolean found = false;
+            System.out.println("\n--- Projects for Employee SSN: " + essn + " ---");
+            while (rs.next()) {
+                found = true;
+                System.out.println("Project Number: " + rs.getInt("pno"));
+                System.out.println("Project Name  : " + rs.getString("pname"));
+                System.out.println("Hours Worked  : " + rs.getDouble("hours"));
+                System.out.println("----------------------");
+            }
+            if (!found) {
+                System.out.println("No assignments found.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by employee.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByProjectNumber() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter Project Number: ");
+            int pno = Integer.parseInt(scanner.nextLine());
+
+            String query = "SELECT w.essn, e.fname, e.lname, w.hours FROM works_on w JOIN employee e ON w.essn = e.ssn WHERE w.pno = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, pno);
+            ResultSet rs = pstmt.executeQuery();
+
+            boolean found = false;
+            System.out.println("\n--- Employees for Project Number: " + pno + " ---");
+            while (rs.next()) {
+                found = true;
+                System.out.println("Employee SSN : " + rs.getString("essn"));
+                System.out.println("Name         : " + rs.getString("fname") + " " + rs.getString("lname"));
+                System.out.println("Hours Worked : " + rs.getDouble("hours"));
+                System.out.println("----------------------");
+            }
+            if (!found) {
+                System.out.println("No assignments found.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by project.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByMinimumHours() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter minimum hours: ");
+            double minHours = Double.parseDouble(scanner.nextLine());
+
+            String query = "SELECT w.essn, e.fname, e.lname, w.pno, p.pname, w.hours FROM works_on w " +
+                           "JOIN employee e ON w.essn = e.ssn " +
+                           "JOIN project p ON w.pno = p.pnumber " +
+                           "WHERE w.hours >= ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setDouble(1, minHours);
+            ResultSet rs = pstmt.executeQuery();
+
+            boolean found = false;
+            System.out.println("\n--- Assignments with at least " + minHours + " hours ---");
+            while (rs.next()) {
+                found = true;
+                System.out.println("Employee : " + rs.getString("fname") + " " + rs.getString("lname") +
+                                   " (SSN: " + rs.getString("essn") + ")");
+                System.out.println("Project  : " + rs.getString("pname") + " (PNo: " + rs.getInt("pno") + ")");
+                System.out.println("Hours    : " + rs.getDouble("hours"));
+                System.out.println("----------------------");
+            }
+            if (!found) {
+                System.out.println("No matching records found.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by minimum hours.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByMaximumHours() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter maximum hours: ");
+            double maxHours = Double.parseDouble(scanner.nextLine());
+
+            String query = "SELECT w.essn, e.fname, e.lname, w.pno, p.pname, w.hours FROM works_on w " +
+                           "JOIN employee e ON w.essn = e.ssn " +
+                           "JOIN project p ON w.pno = p.pnumber " +
+                           "WHERE w.hours <= ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setDouble(1, maxHours);
+            ResultSet rs = pstmt.executeQuery();
+
+            boolean found = false;
+            System.out.println("\n--- Assignments with at most " + maxHours + " hours ---");
+            while (rs.next()) {
+                found = true;
+                System.out.println("Employee : " + rs.getString("fname") + " " + rs.getString("lname") +
+                                   " (SSN: " + rs.getString("essn") + ")");
+                System.out.println("Project  : " + rs.getString("pname") + " (PNo: " + rs.getInt("pno") + ")");
+                System.out.println("Hours    : " + rs.getDouble("hours"));
+                System.out.println("----------------------");
+            }
+            if (!found) {
+                System.out.println("No matching records found.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by maximum hours.");
+            e.printStackTrace();
+        }
+    }
+
+    public void worksOnFilterMenu() {
+        System.out.println("\n--- Works_On Filter Menu ---");
+        System.out.println("1. Filter by Employee SSN");
+        System.out.println("2. Filter by Project Number");
+        System.out.println("3. Filter by Minimum Hours Worked");
+        System.out.println("4. Filter by Maximum Hours Worked");
+        System.out.println("0. Exit");
+
+        System.out.print("Enter your choice: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        switch (choice) {
+            case 1 -> filterByEmployeeSSN();
+            case 2 -> filterByProjectNumber();
+            case 3 -> filterByMinimumHours();
+            case 4 -> filterByMaximumHours();
+            case 0 -> System.out.println("Exiting filter menu.");
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
 }

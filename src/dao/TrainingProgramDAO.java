@@ -155,5 +155,152 @@ public class TrainingProgramDAO {
             e.printStackTrace();
         }
     }
+
+        // ---------------------- FILTERS ------------------------
+
+    
+
+    private void filterByTitleKeyword() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter keyword in title: ");
+            String keyword = scanner.nextLine();
+
+            String query = "SELECT * FROM training_program WHERE LOWER(title) LIKE ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, "%" + keyword.toLowerCase() + "%");
+                ResultSet rs = pstmt.executeQuery();
+
+                boolean found = false;
+                System.out.println("\n--- Programs with title containing \"" + keyword + "\" ---");
+                while (rs.next()) {
+                    found = true;
+                    printTraining(rs);
+                }
+                if (!found) {
+                    System.out.println("No matching training programs found.");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by title.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByLocation() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter location: ");
+            String location = scanner.nextLine();
+
+            String query = "SELECT * FROM training_program WHERE LOWER(location) = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, location.toLowerCase());
+                ResultSet rs = pstmt.executeQuery();
+
+                boolean found = false;
+                System.out.println("\n--- Programs at location \"" + location + "\" ---");
+                while (rs.next()) {
+                    found = true;
+                    printTraining(rs);
+                }
+                if (!found) {
+                    System.out.println("No matching training programs found.");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by location.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByStartDateRange() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter start date (from) [YYYY-MM-DD]: ");
+            Date from = Date.valueOf(scanner.nextLine());
+
+            System.out.print("Enter start date (to) [YYYY-MM-DD]: ");
+            Date to = Date.valueOf(scanner.nextLine());
+
+            String query = "SELECT * FROM training_program WHERE start_date BETWEEN ? AND ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setDate(1, from);
+                pstmt.setDate(2, to);
+                ResultSet rs = pstmt.executeQuery();
+
+                boolean found = false;
+                System.out.println("\n--- Programs starting between " + from + " and " + to + " ---");
+                while (rs.next()) {
+                    found = true;
+                    printTraining(rs);
+                }
+                if (!found) {
+                    System.out.println("No programs in this start date range.");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by start date range.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByEndDateRange() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter end date (from) [YYYY-MM-DD]: ");
+            Date from = Date.valueOf(scanner.nextLine());
+
+            System.out.print("Enter end date (to) [YYYY-MM-DD]: ");
+            Date to = Date.valueOf(scanner.nextLine());
+
+            String query = "SELECT * FROM training_program WHERE end_date BETWEEN ? AND ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setDate(1, from);
+                pstmt.setDate(2, to);
+                ResultSet rs = pstmt.executeQuery();
+
+                boolean found = false;
+                System.out.println("\n--- Programs ending between " + from + " and " + to + " ---");
+                while (rs.next()) {
+                    found = true;
+                    printTraining(rs);
+                }
+                if (!found) {
+                    System.out.println("No programs in this end date range.");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by end date range.");
+            e.printStackTrace();
+        }
+    }
+
+    private void printTraining(ResultSet rs) throws SQLException {
+        System.out.println("Program ID : " + rs.getInt("program_id"));
+        System.out.println("Title      : " + rs.getString("title"));
+        System.out.println("Start Date : " + rs.getDate("start_date"));
+        System.out.println("End Date   : " + rs.getDate("end_date"));
+        System.out.println("Location   : " + rs.getString("location"));
+        System.out.println("-----------------------------");
+    }
+
+    public void trainingFilterMenu() {
+        System.out.println("\n--- Training Program Filter Menu ---");
+        System.out.println("1. Filter by Title Keyword");
+        System.out.println("2. Filter by Location");
+        System.out.println("3. Filter by Start Date Range");
+        System.out.println("4. Filter by End Date Range");
+        System.out.println("0. Exit");
+
+        System.out.print("Enter your choice: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        switch (choice) {
+            case 1 -> filterByTitleKeyword();
+            case 2 -> filterByLocation();
+            case 3 -> filterByStartDateRange();
+            case 4 -> filterByEndDateRange();
+            case 0 -> System.out.println("Exiting filter menu.");
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
 }
 

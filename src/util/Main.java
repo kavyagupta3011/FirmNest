@@ -92,6 +92,20 @@ public class Main {
             System.out.println("55. Get Reviews by Employee");
             System.out.println("56. Update Performance Review");
 
+            System.out.println("57. View Department Change History");
+            System.out.println("58. View Supervisor Change History");
+            System.out.println("59. View Salary Change History");
+            System.out.println("60. Miscellaneous Department Filter");
+            System.out.println("61. Miscellaneous Department Locations Filter");
+            System.out.println("62. Miscellaneous Dependent Filter");
+            System.out.println("63. Miscellaneous Asset Filter");
+            System.out.println("64. Miscellaneous Asset Maintenance Filter");
+            System.out.println("65. Miscellaneous Project Filter");
+            System.out.println("66. Miscellaneous Works On Filter");
+            System.out.println("67. Miscellaneous Training Filter");
+            System.out.println("68. Miscellaneous Employee Training Filter");
+            System.out.println("69. Miscellaneous Attendance Filter");
+            System.out.println("70. Miscellaneous Performance Review Filter");
 
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
@@ -279,6 +293,48 @@ public class Main {
                     break;
                 case 56:
                     performanceReviewDAO.updateReview();
+                    break;
+                case 57:
+                    employeeDAO.viewDepartmentChangeHistory();
+                    break;
+                case 58:
+                    employeeDAO.viewSupervisorChangeHistory();
+                    break;
+                case 59:
+                    employeeDAO.viewSalaryChangeHistory();
+                    break;
+                case 60:
+                    departmentDAO.departmentFilterMenu();
+                    break;
+                case 61:
+                    deptLocationsDAO.deptLocationFilterMenu();
+                    break;
+                case 62:
+                    dependentDAO.dependentFilterMenu();
+                    break;
+                case 63:
+                    assetsDAO.assetFilterMenu();
+                    break;
+                case 64:
+                    assetMaintenanceDAO.maintenanceFilterMenu();
+                    break;
+                case 65:
+                    projectDAO.projectFilterMenu();
+                    break;
+                case 66:
+                    worksOnDAO.worksOnFilterMenu();
+                    break;
+                case 67:
+                    trainingProgramDAO.trainingFilterMenu();
+                    break;
+                case 68:
+                    employeeTrainingDAO.trainingEnrollmentFilterMenu();
+                    break;
+                case 69:
+                    attendanceDAO.attendanceFilterMenu();
+                    break;
+                case 70:
+                    performanceReviewDAO.reviewFilterMenu();
                     break;
                 case 0:
                     System.out.println("Exiting the application...");

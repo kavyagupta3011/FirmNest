@@ -202,4 +202,96 @@ public class ProjectDAO {
             e.printStackTrace();
         }
     }
+
+        // ---------------------- FILTERS ------------------------
+
+    
+
+    private void filterByNameKeyword() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter keyword to search in project name: ");
+            String keyword = scanner.nextLine();
+
+            String query = "SELECT * FROM project WHERE pname LIKE ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, "%" + keyword + "%");
+
+            ResultSet rs = pstmt.executeQuery();
+            displayProjectResults(rs);
+        } catch (Exception e) {
+            System.out.println("Error filtering by project name.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByLocation() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter location to filter by: ");
+            String location = scanner.nextLine();
+
+            String query = "SELECT * FROM project WHERE plocation = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, location);
+
+            ResultSet rs = pstmt.executeQuery();
+            displayProjectResults(rs);
+        } catch (Exception e) {
+            System.out.println("Error filtering by location.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByDepartmentNumber() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter Department Number to filter by: ");
+            int dnum = Integer.parseInt(scanner.nextLine());
+
+            String query = "SELECT * FROM project WHERE dnum = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, dnum);
+
+            ResultSet rs = pstmt.executeQuery();
+            displayProjectResults(rs);
+        } catch (Exception e) {
+            System.out.println("Error filtering by department number.");
+            e.printStackTrace();
+        }
+    }
+
+    private void displayProjectResults(ResultSet rs) throws SQLException {
+        boolean found = false;
+        System.out.println("\n--- Filtered Projects ---");
+        while (rs.next()) {
+            found = true;
+            System.out.println("Project Number : " + rs.getInt("pnumber"));
+            System.out.println("Name           : " + rs.getString("pname"));
+            System.out.println("Location       : " + rs.getString("plocation"));
+            System.out.println("Department No. : " + rs.getInt("dnum"));
+            System.out.println("---------------------------");
+        }
+        if (!found) {
+            System.out.println("No matching projects found.");
+        }
+    }
+
+    public void projectFilterMenu() {
+        System.out.println("\n--- Project Filter Menu ---");
+        System.out.println("1. Filter by Project Name Keyword");
+        System.out.println("2. Filter by Location");
+        System.out.println("3. Filter by Department Number");
+        System.out.println("0. Exit");
+
+        System.out.print("Enter your choice: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        switch (choice) {
+            case 1 -> filterByNameKeyword();
+            case 2 -> filterByLocation();
+            case 3 -> filterByDepartmentNumber();
+            case 0 -> System.out.println("Exiting project filter menu.");
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
+
 }

@@ -169,5 +169,134 @@ public class DepartmentDAO {
             e.printStackTrace();
         }
     }
+
+        // ------------------- FILTER FEATURES -------------------------
+
+
+    private void filterByManagerSSN() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter Manager SSN: ");
+            String ssn = scanner.nextLine();
+            String query = "SELECT * FROM department WHERE mgr_ssn = ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, ssn);
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("\nDepartments managed by SSN: " + ssn);
+            while (rs.next()) {
+                System.out.println("Dept#: " + rs.getInt("dnumber") + ", Name: " + rs.getString("dname"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering departments.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterWithNoManager() {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT * FROM department WHERE mgr_ssn IS NULL";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("\nDepartments with No Manager Assigned:");
+            while (rs.next()) {
+                System.out.println("Dept#: " + rs.getInt("dnumber") + ", Name: " + rs.getString("dname"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering departments.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByNameStartsWith() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter name prefix: ");
+            String prefix = scanner.nextLine();
+            String query = "SELECT * FROM department WHERE dname LIKE ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, prefix + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("\nDepartments starting with '" + prefix + "':");
+            while (rs.next()) {
+                System.out.println("Dept#: " + rs.getInt("dnumber") + ", Name: " + rs.getString("dname"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering departments.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByNameContains() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter name substring: ");
+            String substr = scanner.nextLine();
+            String query = "SELECT * FROM department WHERE dname LIKE ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, "%" + substr + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("\nDepartments containing '" + substr + "':");
+            while (rs.next()) {
+                System.out.println("Dept#: " + rs.getInt("dnumber") + ", Name: " + rs.getString("dname"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering departments.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByStartDateRange() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter Start Date (YYYY-MM-DD): ");
+            Date start = Date.valueOf(scanner.nextLine());
+            System.out.print("Enter End Date (YYYY-MM-DD): ");
+            Date end = Date.valueOf(scanner.nextLine());
+
+            String query = "SELECT * FROM department WHERE mgr_start_date BETWEEN ? AND ?";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setDate(1, start);
+            pstmt.setDate(2, end);
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("\nDepartments with Manager Start Dates Between " + start + " and " + end + ":");
+            while (rs.next()) {
+                System.out.println("Dept#: " + rs.getInt("dnumber") + ", Name: " + rs.getString("dname") +
+                                   ", Start Date: " + rs.getDate("mgr_start_date"));
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering departments.");
+            e.printStackTrace();
+        }
+        
+    }
+    public void departmentFilterMenu() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("\n--- Department Filter Menu ---");
+        System.out.println("1. Filter by Manager SSN");
+        System.out.println("2. Departments with no Manager");
+        System.out.println("3. Department Name Starts With");
+        System.out.println("4. Department Name Contains");
+        System.out.println("5. Filter by Manager Start Date Range");
+        System.out.println("0. Exit");
+
+        System.out.print("Enter your choice: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        switch (choice) {
+            case 1 -> filterByManagerSSN();
+            case 2 -> filterWithNoManager();
+            case 3 -> filterByNameStartsWith();
+            case 4 -> filterByNameContains();
+            case 5 -> filterByStartDateRange();
+            case 0 -> System.out.println("Exiting Department Filter Menu.");
+            default -> System.out.println("Invalid choice.");
+        }
+        scanner.close();
+    }
+
+    
+
     
 }

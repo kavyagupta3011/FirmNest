@@ -52,3 +52,17 @@ ALTER TABLE assets ADD CONSTRAINT assets_assigned_to_fk FOREIGN KEY (assigned_to
 
 
 ALTER TABLE asset_maintenance ADD CONSTRAINT asset_maintenance_asset_id_fk FOREIGN KEY (asset_id) REFERENCES assets(asset_id);
+
+
+ALTER TABLE dept_change_history ADD CONSTRAINT fk_dept_change_ssn FOREIGN KEY (ssn) REFERENCES employee(ssn);
+ALTER TABLE dept_change_history ADD CONSTRAINT fk_dept_change_old_dno FOREIGN KEY (old_dno) REFERENCES department(dnumber);
+ALTER TABLE dept_change_history ADD CONSTRAINT fk_dept_change_new_dno FOREIGN KEY (new_dno) REFERENCES department(dnumber);
+
+
+ALTER TABLE salary_change_history ADD CONSTRAINT salary_change_ssn_fk FOREIGN KEY (ssn) REFERENCES employee(ssn);
+
+
+ALTER TABLE supervisor_change_history ADD CONSTRAINT supervisor_change_ssn_fk FOREIGN KEY (ssn) REFERENCES employee(ssn);
+ALTER TABLE supervisor_change_history ADD CONSTRAINT supervisor_change_old_fk FOREIGN KEY (old_super_ssn) REFERENCES employee(ssn);
+ALTER TABLE supervisor_change_history ADD CONSTRAINT supervisor_change_new_fk FOREIGN KEY (new_super_ssn) REFERENCES employee(ssn);
+

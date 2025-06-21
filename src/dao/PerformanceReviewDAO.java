@@ -121,5 +121,155 @@ public class PerformanceReviewDAO {
             e.printStackTrace();
         }
     }
+
+        // -------------------- ADVANCED FILTERS --------------------
+
+    
+
+    private void filterByRatingRange() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter minimum rating (1-5): ");
+            int min = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Enter maximum rating (1-5): ");
+            int max = Integer.parseInt(scanner.nextLine());
+
+            String query = "SELECT * FROM performance_review WHERE rating BETWEEN ? AND ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, min);
+                pstmt.setInt(2, max);
+                ResultSet rs = pstmt.executeQuery();
+
+                System.out.println("Reviews with ratings between " + min + " and " + max + ":");
+                while (rs.next()) {
+                    System.out.println("Review ID: " + rs.getInt("review_id") +
+                                       ", SSN: " + rs.getString("ssn") +
+                                       ", Rating: " + rs.getInt("rating") +
+                                       ", Date: " + rs.getDate("review_date") +
+                                       ", Comments: " + rs.getString("comments"));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by rating range.");
+            e.printStackTrace();
+        }
+    }
+
+    private void filterByDateRange() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter start date (YYYY-MM-DD): ");
+            LocalDate start = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Enter end date (YYYY-MM-DD): ");
+            LocalDate end = LocalDate.parse(scanner.nextLine());
+
+            String query = "SELECT * FROM performance_review WHERE review_date BETWEEN ? AND ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setDate(1, Date.valueOf(start));
+                pstmt.setDate(2, Date.valueOf(end));
+                ResultSet rs = pstmt.executeQuery();
+
+                System.out.println("Reviews from " + start + " to " + end + ":");
+                while (rs.next()) {
+                    System.out.println("Review ID: " + rs.getInt("review_id") +
+                                       ", SSN: " + rs.getString("ssn") +
+                                       ", Rating: " + rs.getInt("rating") +
+                                       ", Comments: " + rs.getString("comments"));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error filtering by date range.");
+            e.printStackTrace();
+        }
+    }
+
+    private void topNEmployeesByAverageRating() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter number of top employees to show: ");
+            int n = Integer.parseInt(scanner.nextLine());
+
+            String query = """
+                SELECT e.ssn, e.fname, e.lname, AVG(pr.rating) as avg_rating
+                FROM performance_review pr
+                JOIN employee e ON pr.ssn = e.ssn
+                GROUP BY e.ssn, e.fname, e.lname
+                ORDER BY avg_rating DESC
+                LIMIT ?
+                """;
+
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, n);
+                ResultSet rs = pstmt.executeQuery();
+
+                System.out.println("Top " + n + " Employees by Average Rating:");
+                while (rs.next()) {
+                    System.out.println("SSN: " + rs.getString("ssn") +
+                                       ", Name: " + rs.getString("fname") + " " + rs.getString("lname") +
+                                       ", Average Rating: " + rs.getDouble("avg_rating"));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error fetching top employees.");
+            e.printStackTrace();
+        }
+    }
+
+    private void recentReviewsInDepartment() {
+        try (Connection conn = DBConnection.getConnection()) {
+            System.out.print("Enter Department Number: ");
+            int dno = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Enter number of days to look back: ");
+            int days = Integer.parseInt(scanner.nextLine());
+
+            String query = """
+                SELECT pr.review_id, pr.ssn, e.fname, e.lname, pr.rating, pr.comments, pr.review_date
+                FROM performance_review pr
+                JOIN employee e ON pr.ssn = e.ssn
+                WHERE e.dno = ? AND pr.review_date >= CURRENT_DATE - INTERVAL ? DAY
+                ORDER BY pr.review_date DESC
+                """;
+
+            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setInt(1, dno);
+                pstmt.setInt(2, days);
+                ResultSet rs = pstmt.executeQuery();
+
+                System.out.println("Recent Reviews in Department " + dno + " (last " + days + " days):");
+                while (rs.next()) {
+                    System.out.println("Review ID: " + rs.getInt("review_id") +
+                                       ", Name: " + rs.getString("fname") + " " + rs.getString("lname") +
+                                       ", Rating: " + rs.getInt("rating") +
+                                       ", Date: " + rs.getDate("review_date") +
+                                       ", Comments: " + rs.getString("comments"));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error fetching department reviews.");
+            e.printStackTrace();
+        }
+    }
+
+    public void reviewFilterMenu() {
+        System.out.println("\n--- Performance Review Filter Menu ---");
+        System.out.println("1. Filter Reviews by Rating Range");
+        System.out.println("2. Filter Reviews by Date Range");
+        System.out.println("3. Top N Employees by Average Rating");
+        System.out.println("4. Recent Reviews in a Department");
+        System.out.println("0. Exit");
+
+        System.out.print("Enter your choice: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        switch (choice) {
+            case 1 -> filterByRatingRange();
+            case 2 -> filterByDateRange();
+            case 3 -> topNEmployeesByAverageRating();
+            case 4 -> recentReviewsInDepartment();
+            case 0 -> System.out.println("Exiting filter menu.");
+            default -> System.out.println("Invalid choice.");
+        }
+    }
+
 }
 

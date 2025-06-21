@@ -117,3 +117,28 @@ CREATE TABLE asset_maintenance (
     details TEXT,
     CONSTRAINT asset_maintenance_pk PRIMARY KEY (maintenance_id)
 );
+
+CREATE TABLE dept_change_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ssn CHAR(9) NOT NULL,
+    old_dno INT NOT NULL,
+    new_dno INT NOT NULL,
+    change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE salary_change_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ssn CHAR(9) NOT NULL,
+    old_salary DECIMAL(10,2) NOT NULL,
+    new_salary DECIMAL(10,2) NOT NULL,
+    change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE supervisor_change_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ssn CHAR(9) NOT NULL,
+    old_super_ssn CHAR(9),
+    new_super_ssn CHAR(9),
+    change_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
