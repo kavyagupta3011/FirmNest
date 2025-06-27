@@ -68,3 +68,6 @@ ALTER TABLE supervisor_change_history ADD CONSTRAINT supervisor_change_new_fk FO
 
 
 ALTER TABLE leave_requests ADD CONSTRAINT fk_leave_employee FOREIGN KEY (ssn) REFERENCES employee(ssn) ON DELETE CASCADE;
+
+
+ALTER TABLE users ADD CONSTRAINT fk_user_employee FOREIGN KEY (ssn) REFERENCES employee(ssn) ON DELETE CASCADE;

@@ -153,4 +153,12 @@ CREATE TABLE leave_requests (
     applied_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE users (
+    username VARCHAR(30) PRIMARY KEY,
+    password VARCHAR(100) NOT NULL,
+    role ENUM('Admin', 'HR', 'CompanyEmployee') NOT NULL,
+    ssn VARCHAR(9) NOT NULL
+);
+
+
 
