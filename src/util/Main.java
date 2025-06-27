@@ -149,7 +149,21 @@ public class Main {
 
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
-            choice = Integer.parseInt(scanner.nextLine());
+            if (scanner.hasNextLine()) {
+                String inputLine = scanner.nextLine().trim();
+                if (inputLine.isEmpty()) {
+                    choice = -1; // invalid
+                } else {
+                    try {
+                        choice = Integer.parseInt(inputLine);
+                    } catch (NumberFormatException e) {
+                        choice = -1;
+                    }
+                }
+            } else {
+                choice = 0; // End of input stream (e.g., Ctrl+D)
+                break;
+            }
 
             // Action Routing (role-safe, no need to restrict again since menu is role-filtered)
             switch (choice) {
