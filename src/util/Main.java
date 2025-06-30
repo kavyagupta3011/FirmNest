@@ -70,6 +70,7 @@ public class Main {
                 System.out.println("8. Miscellaneous Employee Filters");
                 System.out.println("25. Find Projects by Employee");
                 System.out.println("26. Find Employees by Project");
+                System.out.println("31. Find Dependents by Employee");
                 System.out.println("33. Add Training Program");
                 System.out.println("34. See All Training Programs");
                 System.out.println("36. Update Training Program");
@@ -123,7 +124,6 @@ public class Main {
 
             if (role.equals("Admin") || role.equals("HR") || role.equals("CompanyEmployee")) {
                 System.out.println("30. Add Dependent");
-                System.out.println("31. Find Dependents by Employee");
                 System.out.println("32. Delete Dependent");
                 System.out.println("35. Get Training Program By ID");
                 System.out.println("38. Enroll Employee in Training");
@@ -145,6 +145,8 @@ public class Main {
                 System.out.println("70. Miscellaneous Performance Review Filter");
                 System.out.println("71. Apply for Leave / Work From Home");
                 System.out.println("72. View Leave Requests by Employee");
+                System.out.println("77. Mark Training as Completed");
+
             }
 
             System.out.println("0. Exit");
@@ -243,6 +245,7 @@ public class Main {
                 case 74 -> leaveRequestDAO.updateRequestStatus();
                 case 75 -> leaveRequestDAO.filterPendingRequests();
                 case 76 -> leaveRequestDAO.filterLeavesInMonth();
+                case 77 -> employeeTrainingDAO.markTrainingAsCompleted();
                 case 0 -> System.out.println("Exiting... Goodbye!");
                 default -> System.out.println("Invalid choice. Try again.");
             }

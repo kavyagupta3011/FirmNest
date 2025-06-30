@@ -8,69 +8,81 @@ public class UserDAO {
     private final Scanner scanner = new Scanner(System.in);
 
     public void registerUser() {
-        try (Connection conn = DBConnection.getConnection()) {
-            System.out.print("Enter Username: ");
-            String username = scanner.nextLine();
+    try (Connection conn = DBConnection.getConnection()) {
+        System.out.print("Enter Username: ");
+        String username = scanner.nextLine();
 
-            // Check if username already exists
-            String checkQuery = "SELECT username FROM users WHERE username = ?";
-            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
-                checkStmt.setString(1, username);
-                ResultSet rs = checkStmt.executeQuery();
-                if (rs.next()) {
-                    System.out.println("Username already exists. Try another.");
-                    return;
-                }
-            }
-
-            System.out.print("Enter Password: ");
-            String password = scanner.nextLine();
-
-            System.out.print("Enter Role (Admin/HR/CompanyEmployee): ");
-            String role = scanner.nextLine();
-
-            System.out.print("Enter SSN (must already exist in employee table): ");
-            String ssn = scanner.nextLine();
-
-            if (ssn.isEmpty()) {
-                System.out.println("SSN is required for all users.");
+        // Check if username already exists
+        String checkQuery = "SELECT username FROM users WHERE username = ?";
+        try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+            checkStmt.setString(1, username);
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("Username already exists. Try another.");
                 return;
             }
+        }
 
-            // Check if the SSN exists in employee table
-            String ssnCheckQuery = "SELECT ssn FROM employee WHERE ssn = ?";
-            try (PreparedStatement ssnStmt = conn.prepareStatement(ssnCheckQuery)) {
-                ssnStmt.setString(1, ssn);
-                ResultSet ssnRs = ssnStmt.executeQuery();
-                if (!ssnRs.next()) {
-                    System.out.println("No employee found with that SSN. Register the employee first.");
-                    return;
-                }
+        System.out.print("Enter Password: ");
+        String password = scanner.nextLine();
+
+        System.out.print("Enter Role (Admin/HR/CompanyEmployee): ");
+        String inputRole = scanner.nextLine().trim();
+        String role;
+
+        if (inputRole.equalsIgnoreCase("Admin")) {
+            role = "Admin";
+        } else if (inputRole.equalsIgnoreCase("HR")) {
+            role = "HR";
+        } else if (inputRole.equalsIgnoreCase("CompanyEmployee")) {
+            role = "CompanyEmployee";
+        } else {
+            System.out.println("Invalid role. Please enter Admin, HR, or CompanyEmployee.");
+            return;
+        }
+
+        System.out.print("Enter SSN (must already exist in employee table): ");
+        String ssn = scanner.nextLine().trim();
+
+        if (ssn.isEmpty()) {
+            System.out.println("SSN is required for all users.");
+            return;
+        }
+
+        // Check if the SSN exists in the employee table
+        String ssnCheckQuery = "SELECT ssn FROM employee WHERE ssn = ?";
+        try (PreparedStatement ssnStmt = conn.prepareStatement(ssnCheckQuery)) {
+            ssnStmt.setString(1, ssn);
+            ResultSet ssnRs = ssnStmt.executeQuery();
+            if (!ssnRs.next()) {
+                System.out.println("No employee found with that SSN. Register the employee first.");
+                return;
             }
+        }
 
+        // Insert user
 
-            String query = "INSERT INTO users (username, password, role, ssn) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, username);
-                pstmt.setString(2, password); // In production, hash the password
-                pstmt.setString(3, role);
-                if (ssn != null) {
-                    pstmt.setString(4, ssn);
-                } 
+        String query = "INSERT INTO users (username, password, role, ssn) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password); // (Optional: hash before storing in production)
+            pstmt.setString(3, role);
+            pstmt.setString(4, ssn);
 
-                int rows = pstmt.executeUpdate();
-                if (rows > 0) {
-                    System.out.println("User registered successfully.");
-                } else {
-                    System.out.println("User registration failed.");
-                }
+            int rows = pstmt.executeUpdate();
+            if (rows > 0) {
+                System.out.println("User registered successfully.");
+            } else {
+                System.out.println("User registration failed.");
             }
+        }
 
         } catch (Exception e) {
             System.out.println("Error during user registration.");
             e.printStackTrace();
         }
-    }
+}
+
 
     public boolean validateLogin(String username, String password) {
         try (Connection conn = DBConnection.getConnection()) {

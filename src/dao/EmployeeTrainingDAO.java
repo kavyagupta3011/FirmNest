@@ -146,6 +146,59 @@ public class EmployeeTrainingDAO {
         }
     }
 
+
+    public void markTrainingAsCompleted() {
+    try (Connection conn = DBConnection.getConnection()) {
+        System.out.print("Enter Employee SSN: ");
+        String ssn = scanner.nextLine().trim();
+
+        System.out.print("Enter Program ID: ");
+        int programId = Integer.parseInt(scanner.nextLine());
+
+        // Step 1: Check if employee is enrolled
+        String checkQuery = "SELECT status FROM employee_training WHERE ssn = ? AND program_id = ?";
+        try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+            checkStmt.setString(1, ssn);
+            checkStmt.setInt(2, programId);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("No enrollment found for this employee in the given program.");
+                return;
+            }
+
+            String currentStatus = rs.getString("status");
+
+            // Step 2: Validate current status
+            if ("Completed".equalsIgnoreCase(currentStatus)) {
+                System.out.println("Training is already marked as Completed.");
+                return;
+            }
+
+            if (!"Enrolled".equalsIgnoreCase(currentStatus)) {
+                System.out.println("Training is not currently in 'Enrolled' status. Found status: " + currentStatus);
+                return;
+            }
+
+            // Step 3: Update to Completed
+            String updateQuery = "UPDATE employee_training SET status = 'Completed' WHERE ssn = ? AND program_id = ?";
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                updateStmt.setString(1, ssn);
+                updateStmt.setInt(2, programId);
+                int updated = updateStmt.executeUpdate();
+                if (updated > 0) {
+                    System.out.println("Training marked as Completed successfully.");
+                } else {
+                    System.out.println("Failed to mark as Completed.");
+                }
+            }
+        }
+
+        } catch (Exception e) {
+            System.out.println("Error marking training as completed.");
+            e.printStackTrace();
+        }
+    }
         // ---------------------- FILTERS ------------------------
 
     
